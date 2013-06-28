@@ -192,17 +192,12 @@ extern void init_bcm_wifi(void);
 
 void __init msm8974_add_drivers(void)
 {
-	msm_init_modem_notifier_list();
 	msm_smd_init();
 	msm_rpm_driver_init();
-	msm_lpmrs_module_init();
-	rpm_regulator_smd_driver_init();
+	msm_pm_sleep_status_init();
+	rpm_smd_regulator_driver_init();
 	msm_spm_device_init();
 	krait_power_init();
-	if (of_board_is_rumi())
-		msm_clock_init(&msm8974_rumi_clock_init_data);
-	else
-		msm_clock_init(&msm8974_clock_init_data);
 	tsens_tm_init_driver();
 	msm_thermal_device_init();
 #ifdef CONFIG_LGE_LCD_TUNING
