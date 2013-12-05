@@ -27,14 +27,12 @@
 
 #define PANIC_HANDLER_NAME        "panic-handler"
 
-#define RESTART_REASON_ADDR       0x65C
 #define DLOAD_MODE_ADDR           0x0
 #define UEFI_RAM_DUMP_MAGIC_ADDR  0xC
 #define RAM_CONSOLE_ADDR_ADDR     0x24
 #define RAM_CONSOLE_SIZE_ADDR     0x28
 #define FB1_ADDR_ADDR             0x2C
 
-#define RESTART_REASON      (MSM_IMEM_BASE + RESTART_REASON_ADDR)
 #define UEFI_RAM_DUMP_MAGIC \
 		(MSM_IMEM_BASE + DLOAD_MODE_ADDR + UEFI_RAM_DUMP_MAGIC_ADDR)
 #define RAM_CONSOLE_ADDR    (MSM_IMEM_BASE + RAM_CONSOLE_ADDR_ADDR)
@@ -42,6 +40,7 @@
 #define FB1_ADDR            (MSM_IMEM_BASE + FB1_ADDR_ADDR)
 
 static int dummy_arg;
+void *restart_reason;
 
 static int subsys_crash_magic = 0x0;
 
@@ -89,9 +88,9 @@ void lge_set_restart_reason(unsigned int reason)
 {
 	if ((lge_get_laf_mode() == LGE_LAF_MODE_LAF)
 			&& (reason != LAF_DLOAD_MODE))
-		__raw_writel(LGE_RB_MAGIC | LGE_LAF_CRASH, RESTART_REASON);
+		__raw_writel(LGE_RB_MAGIC | LGE_LAF_CRASH, restart_reason);
 	else
-		__raw_writel(reason, RESTART_REASON);
+		__raw_writel(reason, restart_reason);
 }
 EXPORT_SYMBOL(lge_set_restart_reason);
 
@@ -217,6 +216,18 @@ module_param_call(gen_hw_reset, gen_hw_reset, param_get_bool,
 static int __init lge_panic_handler_probe(struct platform_device *pdev)
 {
 	int ret = 0;
+  struct device_node *np;
+
+  np = of_find_compatible_node(NULL, NULL, "qti,msm-imem-restart_reason");
+  if (!np) {
+    pr_err("unable to find DT imem restart reason node\n");
+    return -ENODEV;
+  }
+  restart_reason = of_iomap(np, 0);
+  if (!restart_reason) {
+    pr_err("unable to map imem restart reason offset\n");
+    return -ENOMEM;
+  }
 
 	return ret;
 }
