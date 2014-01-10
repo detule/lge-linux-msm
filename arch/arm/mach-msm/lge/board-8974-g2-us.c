@@ -24,29 +24,29 @@
 #include <linux/regulator/krait-regulator.h>
 #include <linux/msm_tsens.h>
 #include <linux/msm_thermal.h>
+#include <linux/irqchip/arm-gic.h>
 #include <asm/mach/map.h>
-#include <asm/hardware/gic.h>
 #include <asm/mach/map.h>
 #include <asm/mach/arch.h>
 #include <mach/board.h>
 #include <mach/gpiomux.h>
 #include <mach/msm_iomap.h>
 #ifdef CONFIG_ION_MSM
-#include <mach/ion.h>
+//#include <mach/ion.h>
 #endif
 #include <mach/msm_memtypes.h>
 #include <mach/msm_smd.h>
 #include <mach/restart.h>
 #include <mach/rpm-smd.h>
-#include <mach/rpm-regulator-smd.h>
+#include <linux/regulator/rpm-smd-regulator.h>
 #include <mach/socinfo.h>
 #include <mach/msm_bus_board.h>
 #include "../board-dt.h"
 #include "../clock.h"
-#include "../devices.h"
+//#include "../devices.h"
 #include "../spm.h"
-#include "../modem_notifier.h"
-#include "../lpm_resources.h"
+//#include "../modem_notifier.h"
+//#include "../lpm_resources.h"
 #include "../platsmp.h"
 #include <mach/board_lge.h>
 
@@ -64,8 +64,6 @@ extern int update_preset_lcdc_lut(void);
 #endif // CONFIG_LCD_KCAL
 
 static struct memtype_reserve msm8974_reserve_table[] __initdata = {
-	[MEMTYPE_SMI] = {
-	},
 	[MEMTYPE_EBI0] = {
 		.flags	=	MEMTYPE_FLAGS_1M_ALIGN,
 	},
