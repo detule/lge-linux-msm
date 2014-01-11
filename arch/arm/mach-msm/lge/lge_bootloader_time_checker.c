@@ -75,7 +75,7 @@ static int bootloader_time_checker_probe(struct platform_device *pdev)
 	return ret;
 }
 
-static int __devexit
+static int __exit
 bootloader_time_checker_remove(struct platform_device *pdev)
 {
 	return 0;
@@ -83,7 +83,7 @@ bootloader_time_checker_remove(struct platform_device *pdev)
 
 static struct platform_driver bootloader_time_checker_driver = {
 	.probe = bootloader_time_checker_probe,
-	.remove = __devexit_p(bootloader_time_checker_remove),
+	.remove = __exit_p(bootloader_time_checker_remove),
 	.driver = {
 		.name = MODULE_NAME,
 		.owner = THIS_MODULE,
