@@ -193,6 +193,7 @@ extern void init_bcm_wifi(void);
 
 void __init msm8974_add_drivers(void)
 {
+	lge_add_persistent_device();
 	msm_smd_init();
 	msm_rpm_driver_init();
 	msm_pm_sleep_status_init();
@@ -204,7 +205,6 @@ void __init msm8974_add_drivers(void)
 #ifdef CONFIG_LGE_LCD_TUNING
 	lge_add_lcd_misc_devices();
 #endif
-	lge_add_persistent_device();
 #ifdef CONFIG_LGE_QFPROM_INTERFACE
 	lge_add_qfprom_devices();
 #endif

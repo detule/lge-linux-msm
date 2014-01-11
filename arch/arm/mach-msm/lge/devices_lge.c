@@ -4,7 +4,6 @@
 #include <mach/board_lge.h>
 
 #include <linux/platform_device.h>
-#include <linux/persistent_ram.h>
 #include <asm/setup.h>
 #include <asm/system_info.h>
 #include <linux/io.h>
@@ -13,6 +12,7 @@
 #include <linux/of_fdt.h>
 #include <linux/vmalloc.h>
 #include <linux/memblock.h>
+#include <linux/pstore_ram.h>
 #ifdef CONFIG_LGE_HANDLE_PANIC
 #include <mach/lge_handle_panic.h>
 #endif
@@ -160,88 +160,42 @@ void get_dt_cn_prop_str(const char *name, char *value)
 	printk(KERN_ERR "The %s node have not property value\n", name);
 }
 
-#ifdef CONFIG_ANDROID_RAM_CONSOLE
-static struct ram_console_platform_data ram_console_pdata = {
-	.bootinfo = "UTS_VERSION\n",
+#ifdef CONFIG_PSTORE_RAM
+#define RAM_CONSOLE_START 0x7DF00000
+static struct ramoops_platform_data ramoops_data = {
+  .mem_address            = RAM_CONSOLE_START,
+  .mem_size               = LGE_PERSISTENT_RAM_SIZE,
+  .console_size               = LGE_PERSISTENT_RAM_SIZE,
 };
 
-static struct platform_device ram_console_device = {
-	.name = "ram_console",
-	.id = -1,
-	.dev = {
-		.platform_data = &ram_console_pdata,
-	}
-};
-#endif /*CONFIG_ANDROID_RAM_CONSOLE*/
-
-#ifdef CONFIG_PERSISTENT_TRACER
-static struct platform_device persistent_trace_device = {
-	.name = "persistent_trace",
-	.id = -1,
-};
-#endif
-
-#ifdef CONFIG_ANDROID_PERSISTENT_RAM
-static struct persistent_ram_descriptor lge_pram_descs[] = {
-#ifdef CONFIG_ANDROID_RAM_CONSOLE
-	{
-		.name = "ram_console",
-		.size = LGE_RAM_CONSOLE_SIZE,
-	},
-#endif
-#ifdef CONFIG_PERSISTENT_TRACER
-	{
-		.name = "persistent_trace",
-		.size = LGE_RAM_CONSOLE_SIZE,
-	},
-#endif
+static struct platform_device ramoops_dev = {
+  .name = "ramoops",
+  .dev = {
+    .platform_data = &ramoops_data,
+  },
 };
 
-static struct persistent_ram lge_persist_ram = {
-	.size = LGE_PERSISTENT_RAM_SIZE,
-	.num_descs = ARRAY_SIZE(lge_pram_descs),
-	.descs = lge_pram_descs,
-};
+#endif /*CONFIG_PSTORE_RAM*/
 
-void __init lge_add_persist_ram_devices(void)
-{
-	int ret;
-	struct memtype_reserve *mt = &reserve_info->memtype_reserve_table[MEMTYPE_EBI1];
-
-	/* ram->start = 0x7D600000; */
-	/* change to variable value to ram->start value */
-	lge_persist_ram.start = mt->start - LGE_PERSISTENT_RAM_SIZE;
-	pr_info("PERSIST RAM CONSOLE START ADDR : 0x%x\n", lge_persist_ram.start);
-
-	ret = persistent_ram_early_init(&lge_persist_ram);
-	if (ret) {
-		pr_err("%s: failed to initialize persistent ram\n", __func__);
-		return;
-	}
-}
-#endif /*CONFIG_ANDROID_PERSISTENT_RAM*/
 
 void __init lge_reserve(void)
 {
-#if defined(CONFIG_ANDROID_PERSISTENT_RAM)
-	lge_add_persist_ram_devices();
-#endif
+#ifdef CONFIG_PSTORE_RAM
+  int ret;
+
+  ret = memblock_reserve(RAM_CONSOLE_START, LGE_PERSISTENT_RAM_SIZE);
+  if (ret) {
+    pr_err("Failed to reserve persistent memory from %08lx-%08lx\n",
+      (unsigned long)RAM_CONSOLE_START,(unsigned long)(RAM_CONSOLE_START + LGE_PERSISTENT_RAM_SIZE));
+  }
+#endif /*CONFIG_PSTORE_RAM*/
 }
 
 void __init lge_add_persistent_device(void)
 {
-#ifdef CONFIG_ANDROID_RAM_CONSOLE
-	platform_device_register(&ram_console_device);
-#ifdef CONFIG_LGE_HANDLE_PANIC
-	/* write ram console addr to imem */
-	lge_set_ram_console_addr(lge_persist_ram.start,
-			LGE_RAM_CONSOLE_SIZE);
-#endif
-#endif
-#ifdef CONFIG_PERSISTENT_TRACER
-	platform_device_register(&persistent_trace_device);
-#endif
-
+#ifdef CONFIG_PSTORE_RAM
+	platform_device_register(&ramoops_dev);
+#endif /*CONFIG_PSTORE_RAM*/
 }
 
 #ifdef CONFIG_LGE_ECO_MODE
@@ -817,12 +771,12 @@ static int lge_boost_gpio_resume(struct device *dev)
 }
 #endif
 
-static int __devexit lge_boost_gpio_remove(struct platform_device *pdev)
+static int __exit lge_boost_gpio_remove(struct platform_device *pdev)
 {
 	return 0;
 }
 
-static int __devinit lge_boost_gpio_probe(struct platform_device *pdev)
+static int lge_boost_gpio_probe(struct platform_device *pdev)
 {
 	const struct lge_boost_gpio_platform_data *pdata =
 		pdev->dev.platform_data;
@@ -878,7 +832,7 @@ static SIMPLE_DEV_PM_OPS(lge_boost_gpio_pm_ops,
 
 static struct platform_driver lge_boost_gpio_device_driver = {
 	.probe		= lge_boost_gpio_probe,
-	.remove		= __devexit_p(lge_boost_gpio_remove),
+	.remove		= __exit_p(lge_boost_gpio_remove),
 	.driver		= {
 		.name	= "lge_boost_gpio",
 		.pm	= &lge_boost_gpio_pm_ops,

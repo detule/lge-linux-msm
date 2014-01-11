@@ -147,9 +147,7 @@ extern bool lge_get_cont_splash_enabled(void);
 extern unsigned int lge_get_uart_mode(void);
 extern void lge_set_uart_mode(unsigned int um);
 
-#ifdef CONFIG_ANDROID_PERSISTENT_RAM
 #define LGE_PERSISTENT_RAM_SIZE (SZ_1M)
-#endif
 
 #if defined(CONFIG_ANDROID_RAM_CONSOLE)
 #define LGE_RAM_CONSOLE_SIZE (128 * SZ_1K * 2)
@@ -159,9 +157,7 @@ void __init lge_reserve(void);
 void __init lge_add_persistent_device(void);
 
 
-#if defined(CONFIG_ANDROID_PERSISTENT_RAM)
 void __init lge_add_persist_ram_devices(void);
-#endif
 
 #ifdef CONFIG_LGE_LCD_TUNING
 void __init lge_add_lcd_misc_devices(void);
