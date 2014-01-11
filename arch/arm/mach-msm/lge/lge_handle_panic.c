@@ -18,6 +18,7 @@
 #include <linux/platform_device.h>
 #include <linux/reboot.h>
 #include <linux/io.h>
+#include <linux/of_address.h>
 #include <asm/setup.h>
 #include <linux/init.h>
 #include <mach/subsystem_restart.h>
@@ -33,8 +34,6 @@
 #define RAM_CONSOLE_SIZE_ADDR     0x28
 #define FB1_ADDR_ADDR             0x2C
 
-#define UEFI_RAM_DUMP_MAGIC \
-		(MSM_IMEM_BASE + DLOAD_MODE_ADDR + UEFI_RAM_DUMP_MAGIC_ADDR)
 #define RAM_CONSOLE_ADDR    (MSM_IMEM_BASE + RAM_CONSOLE_ADDR_ADDR)
 #define RAM_CONSOLE_SIZE    (MSM_IMEM_BASE + RAM_CONSOLE_SIZE_ADDR)
 #define FB1_ADDR            (MSM_IMEM_BASE + FB1_ADDR_ADDR)
@@ -64,23 +63,8 @@ int lge_set_magic_subsystem(const char *name, int type)
 }
 EXPORT_SYMBOL(lge_set_magic_subsystem);
 
-void lge_skip_dload_by_sbl(int on)
-{
-	/* skip entering dload mode at sbl1 */
-	__raw_writel(on ? 1 : 0, UEFI_RAM_DUMP_MAGIC);
-}
-EXPORT_SYMBOL(lge_skip_dload_by_sbl);
-
-void lge_set_ram_console_addr(unsigned int addr, unsigned int size)
-{
-	__raw_writel(addr, RAM_CONSOLE_ADDR);
-	__raw_writel(size, RAM_CONSOLE_SIZE);
-}
-EXPORT_SYMBOL(lge_set_ram_console_addr);
-
 void lge_set_fb1_addr(unsigned int addr)
 {
-	__raw_writel(addr, FB1_ADDR);
 }
 EXPORT_SYMBOL(lge_set_fb1_addr);
 
@@ -232,14 +216,14 @@ static int __init lge_panic_handler_probe(struct platform_device *pdev)
 	return ret;
 }
 
-static int __devexit lge_panic_handler_remove(struct platform_device *pdev)
+static int __exit lge_panic_handler_remove(struct platform_device *pdev)
 {
 	return 0;
 }
 
 static struct platform_driver panic_handler_driver __refdata = {
 	.probe = lge_panic_handler_probe,
-	.remove = __devexit_p(lge_panic_handler_remove),
+	.remove = __exit_p(lge_panic_handler_remove),
 	.driver = {
 		.name = PANIC_HANDLER_NAME,
 		.owner = THIS_MODULE,
