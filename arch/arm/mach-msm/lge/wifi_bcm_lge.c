@@ -486,8 +486,8 @@ static int bcm_wifi_get_mac_addr(unsigned char* buf)
 		return 0;
 	}
 
-	srandom32((uint)jiffies);
-	rand_mac = random32();
+	prandom_seed((uint)jiffies);
+	rand_mac = prandom_u32();
 	buf[0] = 0x00;
 	buf[1] = 0x90;
 	buf[2] = 0x4c;
