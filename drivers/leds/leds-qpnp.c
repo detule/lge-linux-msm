@@ -1075,7 +1075,8 @@ regulator_turn_off:
 
 static int qpnp_flash_set(struct qpnp_led_data *led)
 {
-	int rc, error;
+	int rc=0;
+  int error;
 	int val = led->cdev.brightness;
 
 	if (led->flash_cfg->torch_enable)
@@ -1541,8 +1542,7 @@ static void qpnp_led_set(struct led_classdev *led_cdev,
 static void __qpnp_led_work(struct qpnp_led_data *led,
 				enum led_brightness value)
 {
-	int rc;
-
+  int rc=0;
 	mutex_lock(&led->lock);
 
 	switch (led->id) {
