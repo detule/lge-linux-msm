@@ -39,7 +39,7 @@
 #define FB1_ADDR            (MSM_IMEM_BASE + FB1_ADDR_ADDR)
 
 static int dummy_arg;
-void *restart_reason;
+void *restart_reason_addr;
 
 static int subsys_crash_magic = 0x0;
 
@@ -72,9 +72,9 @@ void lge_set_restart_reason(unsigned int reason)
 {
 	if ((lge_get_laf_mode() == LGE_LAF_MODE_LAF)
 			&& (reason != LAF_DLOAD_MODE))
-		__raw_writel(LGE_RB_MAGIC | LGE_LAF_CRASH, restart_reason);
+		__raw_writel(LGE_RB_MAGIC | LGE_LAF_CRASH, restart_reason_addr);
 	else
-		__raw_writel(reason, restart_reason);
+		__raw_writel(reason, restart_reason_addr);
 }
 EXPORT_SYMBOL(lge_set_restart_reason);
 
@@ -139,13 +139,13 @@ module_param_call(gen_wcnss_panic, gen_wcnss_panic, param_get_bool, &dummy_arg,
 #define WDT0_EN         0x08
 #define WDT0_BARK_TIME  0x10
 #define WDT0_BITE_TIME  0x14
-
-extern void __iomem *wdt_timer_get_timer0_base(void);
+#if 0
+extern void __iomem *msm_timer_get_timer0_base(void);
 
 static int gen_wdt_bark(const char *val, struct kernel_param *kp)
 {
 	static void __iomem *msm_tmr0_base;
-	msm_tmr0_base = wdt_timer_get_timer0_base();
+	msm_tmr0_base = msm_timer_get_timer0_base();
 
 	__raw_writel(0, msm_tmr0_base + WDT0_EN);
 	__raw_writel(1, msm_tmr0_base + WDT0_RST);
@@ -160,7 +160,7 @@ module_param_call(gen_wdt_bark, gen_wdt_bark, param_get_bool,
 static int gen_wdt_bite(const char *val, struct kernel_param *kp)
 {
 	static void __iomem *msm_tmr0_base;
-	msm_tmr0_base = wdt_timer_get_timer0_base();
+	msm_tmr0_base = msm_timer_get_timer0_base();
 	__raw_writel(0, msm_tmr0_base + WDT0_EN);
 	__raw_writel(1, msm_tmr0_base + WDT0_RST);
 	__raw_writel(5 * 0x31F3, msm_tmr0_base + WDT0_BARK_TIME);
@@ -170,7 +170,7 @@ static int gen_wdt_bite(const char *val, struct kernel_param *kp)
 }
 module_param_call(gen_wdt_bite, gen_wdt_bite, param_get_bool,
 		&dummy_arg, S_IWUSR | S_IRUGO);
-
+#endif
 static int gen_bus_hang(const char *val, struct kernel_param *kp)
 {
 	static void __iomem *reserved;
@@ -207,8 +207,8 @@ static int __init lge_panic_handler_probe(struct platform_device *pdev)
     pr_err("unable to find DT imem restart reason node\n");
     return -ENODEV;
   }
-  restart_reason = of_iomap(np, 0);
-  if (!restart_reason) {
+  restart_reason_addr = of_iomap(np, 0);
+  if (!restart_reason_addr) {
     pr_err("unable to map imem restart reason offset\n");
     return -ENOMEM;
   }
