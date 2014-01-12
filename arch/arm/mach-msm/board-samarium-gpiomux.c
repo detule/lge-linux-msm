@@ -148,6 +148,8 @@ static struct msm_gpiomux_config wcnss_5wire_interface[] = {
 };
 
 static struct msm_gpiomux_config msm_blsp_configs[] __initdata = {
+/* LGE_CHANGE_S, [BT][younghyun.kwon@lge.com], 2013-01-29 */
+#ifndef CONFIG_LGE_BLUETOOTH
 	{
 		.gpio      = 0,		/* BLSP1 QUP1 SPI_DATA_MOSI */
 		.settings = {
@@ -166,6 +168,7 @@ static struct msm_gpiomux_config msm_blsp_configs[] __initdata = {
 			[GPIOMUX_SUSPENDED] = &gpio_spi_config,
 		},
 	},
+#endif
 	{
 		.gpio      = 6,		/* BLSP1 QUP2 I2C_SDA */
 		.settings = {
@@ -180,6 +183,8 @@ static struct msm_gpiomux_config msm_blsp_configs[] __initdata = {
 			[GPIOMUX_SUSPENDED] = &gpio_i2c_config,
 		},
 	},
+/* LGE_CHANGE_S, [BT][younghyun.kwon@lge.com], 2013-01-29 */
+#ifndef CONFIG_LGE_BLUETOOTH
 	{
 		.gpio      = 8,		/* BLSP1 QUP SPI_CS1_N */
 		.settings = {
@@ -192,6 +197,7 @@ static struct msm_gpiomux_config msm_blsp_configs[] __initdata = {
 			[GPIOMUX_SUSPENDED] = &gpio_spi_cs2_config,
 		},
 	},
+#endif
 	{
 		.gpio      = 4,	       /* BLSP2 UART TX */
 		.settings = {
