@@ -316,14 +316,6 @@ __create_page_tables:
 	orr	r3, r7, #0x7c000000
 	str	r3, [r0]
 #endif
-
-#if defined(CONFIG_MACH_LGE)
-  ldr  r12, =0x7DF00000
-  add  r0, r4, r12, lsr #(SECTION_SHIFT - PMD_ORDER)
-  orr  r3, r7, r12
-  str  r3, [r0]
-#endif
-
 #ifdef CONFIG_ARCH_RPC
 	/*
 	 * Map in screen at 0x02000000 & SCREEN2_BASE
