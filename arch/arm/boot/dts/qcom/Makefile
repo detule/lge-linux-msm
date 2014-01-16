@@ -103,6 +103,7 @@ DTB_LIST := $(dtb-y)
 endif
 
 targets += dtbs
+subdir- := msm8974-g2-spr
 endif
 
 $(obj)/../%.dtb: $(src)/%.dts

@@ -306,6 +306,7 @@ zinstall uinstall install: vmlinux
 dtbs: scripts
 	$(Q)$(MAKE) $(build)=$(boot)/dts MACHINE=$(MACHINE) dtbs
 	$(Q)$(MAKE) $(build)=$(boot)/dts/qcom MACHINE=$(MACHINE) dtbs
+	$(Q)$(MAKE) $(build)=$(boot)/dts/qcom/msm8974-g2-spr MACHINE=$(MACHINE) dtbs
 
 zImage-dtb: vmlinux scripts dtbs
 	$(Q)$(MAKE) $(build)=$(boot) MACHINE=$(MACHINE) $(boot)/$@
