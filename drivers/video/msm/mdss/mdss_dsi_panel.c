@@ -182,9 +182,10 @@ void mdss_dsi_panel_reset(struct mdss_panel_data *pdata, int enable)
 	pinfo = &(ctrl_pdata->panel_data.panel_info);
 
 	if (enable) {
+#ifndef CONFIG_MACH_LGE
 		if (gpio_is_valid(ctrl_pdata->disp_en_gpio))
 			gpio_set_value((ctrl_pdata->disp_en_gpio), 1);
-
+#endif
 		for (i = 0; i < pdata->panel_info.rst_seq_len; ++i) {
 			gpio_set_value((ctrl_pdata->rst_gpio),
 				pdata->panel_info.rst_seq[i]);
@@ -210,10 +211,10 @@ void mdss_dsi_panel_reset(struct mdss_panel_data *pdata, int enable)
 	} else {
 		if (gpio_is_valid(ctrl_pdata->bklt_en_gpio))
 			gpio_set_value((ctrl_pdata->bklt_en_gpio), 0);
-
+#ifndef CONFIG_MACH_LGE
 		if (gpio_is_valid(ctrl_pdata->disp_en_gpio))
 			gpio_set_value((ctrl_pdata->disp_en_gpio), 0);
-
+#endif
 		gpio_set_value((ctrl_pdata->rst_gpio), 0);
 	}
 }

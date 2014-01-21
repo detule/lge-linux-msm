@@ -13,6 +13,7 @@
 &soc {
 
 	qcom,mdss_mdp@fd900000 {
+		qcom,mdss-pref-prim-intf = "dsi";
 		qcom,mdss_fb_primary {
 			qcom,memory-reservation-size = <0x1000000>;
 		};
@@ -259,59 +260,54 @@
 		qcom,ief-on-dsi-state = "DSI_HS_MODE";
 	};
 
-	qcom,mdss_dsi_lgit_cmd {
-		compatible = "qcom,mdss-dsi-panel";
-		label = "LGIT 1080p cmd mode dsi panel";
-		qcom,dsi-ctrl-phandle = <&mdss_dsi0>;
-		qcom,enable-gpio = <&msmgpio 58 0>;
-		qcom,te-gpio = <&msmgpio 12 0>;
-		qcom,rst-gpio = <&pm8941_gpios 19 0>;
-		qcom,mdss-pan-res = <1080 1920>;
-		qcom,mdss-pan-bpp = <24>;
-		qcom,mdss-pan-dest = "display_1";
-		qcom,mdss-pan-porch-values = <96 4 100 9 1 10>;
-		qcom,mdss-pan-underflow-clr = <0xff>;
-		qcom,mdss-pan-bl-ctrl = "bl_ctrl_wled";
-		qcom,mdss-pan-bl-levels = <1 255>;
-		qcom,mdss-pan-dsi-mode = <1>;
-		qcom,mdss-vsync-enable = <1>;
-		qcom,mdss-hw-vsync-mode = <1>;
-		qcom,mdss-pan-dsi-h-pulse-mode = <0>;
-		qcom,mdss-pan-dsi-h-power-stop = <0 0 0>;
-		qcom,mdss-pan-dsi-bllp-power-stop = <1 1>;
-		qcom,mdss-pan-dsi-traffic-mode = <1>;
+	dsi_lgit_1080_cmd:qcom,mdss_dsi_lgit_cmd {
+		qcom,mdss-dsi-panel-name = "LGIT 1080p cmd mode dsi panel";
+		qcom,cont-splash-enabled;
+		qcom,mdss-dsi-panel-controller = <&mdss_dsi0>;
+		qcom,mdss-dsi-panel-width = <1080>;
+		qcom,mdss-dsi-panel-height = <1920>;
+		qcom,mdss-dsi-reset-sequence = <1 5>;
+		qcom,mdss-dsi-bpp = <24>;
+		qcom,mdss-dsi-panel-destination = "display_1";
+		qcom,mdss-dsi-h-back-porch = <94>;
+		qcom,mdss-dsi-h-pulse-width = <4>;
+		qcom,mdss-dsi-h-front-porch = <100>;
+		qcom,mdss-dsi-v-back-porch = <9>;
+		qcom,mdss-dsi-v-pulse-width = <1>;
+		qcom,mdss-dsi-v-front-porch = <10>;
+		qcom,mdss-dsi-underflow-color = <0xff>;
+		qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
+		qcom,mdss-dsi-bl-min-level = <1>;
+		qcom,mdss-dsi-panel-type = "dsi_cmd_type";
+		qcom,mdss-dsi-te-check-enable;
+		qcom,mdss-dsi-te-using-te-pin;
+		qcom,mdss-dsi-te-pin-select = <1>;
+		qcom,mdss-dsi-h-sync-pulse = <0>;
+		qcom,mdss-dsi-bllp-eof-power-mode;
+		qcom,mdss-dsi-bllp-power-mode;
+		/*not sure about this one*/
 		qcom,mdss-pan-dsi-dst-format = <8>;
-		qcom,mdss-pan-dsi-vc = <0>;
-		qcom,mdss-pan-dsi-rgb-swap = <0>;
-		qcom,mdss-pan-dsi-data-lanes = <1 1 1 1>;
-		qcom,mdss-pan-dsi-dlane-swap = <0>;
-		qcom,mdss-pan-dsi-t-clk = <0x1E 0x37>;
-		qcom,mdss-pan-dsi-stream = <0>;
-		qcom,mdss-pan-dsi-mdp-tr = <0x0>;
-		qcom,mdss-pan-dsi-dma-tr = <0x04>;
-		qcom,mdss-pan-dsi-frame-rate = <60>;
-		qcom,mdss-pan-te-sel = <1>;
-		qcom,mdss-pan-wr-mem-continue = <0x3c>;
-		qcom,mdss-pan-wr-mem-start = <0x2c>;
-		qcom,mdss-pan-insert-dcs-cmd = <1>;
-		qcom,panel-phy-regulatorSettings = [
-			07 09 03 00  /* Regualotor settings */
-			20 00 01];
-		qcom,panel-phy-timingSettings = [
+		qcom,mdss-dsi-virtual-channel-id = <0>;
+		qcom,mdss-dsi-color-order = "rgb_swap_rgb";
+		qcom,mdss-dsi-lane-0-state;
+		qcom,mdss-dsi-lane-1-state;
+		qcom,mdss-dsi-lane-2-state;
+		qcom,mdss-dsi-lane-3-state;
+		qcom,mdss-dsi-lane-map = "lane_map_0123";
+		qcom,mdss-dsi-t-clk-pre = <0x1E>;
+		qcom,mdss-dsi-t-clk-post = <0x37>;
+		qcom,mdss-dsi-stream = <0>;
+		qcom,mdss-dsi-mdp-trigger = "none";
+		qcom,mdss-dsi-dma-trigger = "trigger_sw";
+		qcom,mdss-tear-check-frame-rate = <6000>;
+
+		qcom,mdss-dsi-te-v-sync-continue-lines = <0x3c>;
+		qcom,mdss-dsi-te-v-sync-rd-ptr-irq-line = <0x2c>;
+		qcom,mdss-dsi-te-dcs-command = <1>;
+		qcom,mdss-dsi-panel-timings = [
 			c4 38 3a 32 5f 5a 39
 			39 5a 03 04 00];
-		qcom,panel-phy-strengthCtrl = [
-			ff 06];
-		qcom,panel-phy-bistCtrl = [
-			00 00 b1 ff           /* BIST Ctrl settings */
-			00 00];
-		qcom,panel-phy-laneConfig =
-			[00 00 00 00 00 00 00 01 97 /* lane0 config */
-			00 00 00 00 05 00 00 01 97 /* lane1 config */
-			00 00 00 00 0a 00 00 01 97 /* lane2 config */
-			00 00 00 00 0f 00 00 01 97 /* lane3 config */
-			00 c0 00 00 00 00 00 01 bb]; /* Clk ln config */
-		qcom,panel-on-cmds = [
+		qcom,mdss-dsi-on-command = [
 			29 01 00 00 00 00 02 b0 04  // changed it to 29
 			05 01 00 00 00 00 01 00
 			05 01 00 00 00 00 01 00
@@ -421,8 +417,8 @@
 			3f 3f
 			05 01 00 00 00 00 01 29
 			05 01 00 00 64 00 01 11];
-		qcom,on-cmds-dsi-state = "DSI_LP_MODE";
-		qcom,panel-off-cmds = [
+		qcom,mdss-dsi-on-command-state = "dsi_lp_mode";
+		qcom,mdss-dsi-off-command = [
 			29 01 00 00 00 00 08 d5
 			06 00 00 00 48
 			00 48
@@ -431,7 +427,7 @@
 			00 48
 			05 01 00 00 14 00 01 28
 			05 01 00 00 64 00 01 10];
-		qcom,off-cmds-dsi-state = "DSI_HS_MODE";
+		qcom,mdss-dsi-off-command-state = "dsi_hs_mode";
 		qcom,panel-ief-off-cmds = [
 			29 01 00 00 00 00 02 b0 04
 			29 01 00 00 00 00 03 dd
