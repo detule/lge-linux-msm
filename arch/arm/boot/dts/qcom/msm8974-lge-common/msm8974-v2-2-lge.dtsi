@@ -40,3 +40,7 @@
 		};
 	};
 };
+
+&memory_hole {
+	qcom,memblock-remove = <0x7f00000 0x8000000>; /* Address and Size of Hole */
+};
