@@ -901,6 +901,6 @@ static void __exit msm_subsystem_iommu_exit(void)
 	platform_driver_unregister(&iommu_domain_driver);
 }
 
-device_initcall(msm_subsystem_iommu_init);
+late_initcall(msm_subsystem_iommu_init);
 module_exit(msm_subsystem_iommu_exit);
 
