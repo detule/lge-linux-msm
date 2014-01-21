@@ -83,7 +83,7 @@
 		mdss_fb0: qcom,mdss_fb_primary {
 			cell-index = <0>;
 			compatible = "qcom,mdss-fb";
-			qcom,memblock-reserve = <0x03200000 0x01E00000>;
+			qcom,memblock-reserve = <0x0D200000 0x01E00000>;
 			linux,contiguous-region = <&fb_mem>;
 		};
 
@@ -108,6 +108,7 @@
 		vdda-supply = <&pm8941_l2>;
 		qcom,mdss-fb-map = <&mdss_fb0>;
 		qcom,mdss-mdp = <&mdss_mdp>;
+		qcom,dsi-pref-prim-pan = <&dsi_lgit_1080_cmd>;
 		qcom,platform-reset-gpio = <&pm8941_gpios 19 0>;
 		qcom,platform-enable-gpio = <&msmgpio 58 0>;
 		qcom,platform-te-gpio = <&msmgpio 12 0>;
@@ -119,6 +120,7 @@
 			00 00 00 00 0a 00 00 01 97
 			00 00 00 00 0f 00 00 01 97
 			00 c0 00 00 00 00 00 01 bb];
+/*
 		qcom,platform-supply-entry1 {
 				qcom,supply-name = "vdd";
 				qcom,supply-min-voltage = <3000000>;
@@ -130,6 +132,7 @@
 				qcom,supply-pre-off-sleep = <0>;
 				qcom,supply-post-off-sleep = <0>;
 		};
+*/
 		qcom,platform-supply-entry2 {
 				qcom,supply-name = "vddio";
 				qcom,supply-min-voltage = <1800000>;
